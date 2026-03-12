@@ -1,5 +1,5 @@
 // AdminDashboard.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FiUsers,
   FiBook,
@@ -18,13 +18,25 @@ import {
 import styles from "../styles/adminDashboard.module.css";
 
 function AdminDashboard() {
+  const [count, resetCount] = useState(0);
   const [timeRange, setTimeRange] = useState("week");
+  useEffect(() => {
+    (async () => {
+      let res = await fetch("http://localhost:8000/api/count/log/users", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await res.json();
+      resetCount(data.count);
+    })();
+  }, []);
 
   // Sample data for statistics
   const statsData = [
     {
       title: "Total Users",
-      value: "2,543",
+      value: count.toString(),
       change: "+12.5%",
       trend: "up",
       icon: FiUsers,
