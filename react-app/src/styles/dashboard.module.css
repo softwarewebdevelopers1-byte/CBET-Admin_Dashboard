@@ -1,0 +1,158 @@
+/* dashboard.module.css */
+.dashboardLayout {
+  display: flex;
+  min-height: 100vh;
+  background: #f7fafc;
+  position: relative;
+}
+
+.dashboardContent {
+  flex: 1;
+  transition: margin-left 0.3s ease;
+  margin-left: 260px; /* Default sidebar width */
+  background: #f7fafc;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+.dashboardContent::-webkit-scrollbar {
+  width: 8px;
+}
+.dashboardContent::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  background-color: #1a202c;
+}
+
+
+/* When sidebar is collapsed */
+.collapsed .dashboardContent {
+  margin-left: 70px; /* Collapsed sidebar width */
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .dashboardContent {
+    margin-left: 70px; /* Collapsed width on tablet */
+  }
+
+  .dashboardLayout:not(.collapsed) .dashboardContent {
+    margin-left: 260px; /* Full width when expanded on tablet */
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardContent {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .dashboardLayout.collapsed .dashboardContent {
+    margin-left: 70px; /* Keep space for collapsed sidebar on mobile */
+    width: calc(100% - 70px);
+  }
+
+  .dashboardLayout:not(.collapsed) .dashboardContent {
+    margin-left: 0;
+    width: 100%;
+    /* Optional: Add overlay effect when sidebar is expanded on mobile */
+    filter: brightness(0.7);
+    pointer-events: none;
+  }
+}
+
+/* Optional: Add overlay for mobile when sidebar is open */
+@media (max-width: 768px) {
+  .dashboardLayout:not(.collapsed)::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    pointer-events: none;
+  }
+}
+
+/* Smooth theme transitions */
+.dashboardLayout * {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* Loading state for dashboard content */
+.dashboardContent.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+/* Optional: Custom scrollbar for dashboard content */
+.dashboardContent::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dashboardContent::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.dashboardContent::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.dashboardContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Firefox support */
+.dashboardContent {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
+}
+
+/* Animation for content fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboardContent > * {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Print styles */
+@media print {
+  .dashboardLayout {
+    display: block;
+  }
+
+  .dashboardContent {
+    margin-left: 0 !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dashboardContent {
+    border-left: 2px solid #000;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .dashboardContent,
+  .dashboardLayout * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

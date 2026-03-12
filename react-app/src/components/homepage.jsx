@@ -15,7 +15,7 @@ import {
   FiCalendar,
   FiSearch,
 } from "react-icons/fi";
-import "../styles/AdminDashboard.css";
+import styles from "../styles/adminDashboard.module.css";
 
 function AdminDashboard() {
   const [timeRange, setTimeRange] = useState("week");
@@ -154,22 +154,22 @@ function AdminDashboard() {
   ];
 
   return (
-    <div className="admin-dashboard">
+    <div className={styles.adminDashboard}>
       {/* Header Section */}
-      <div className="dashboard-header">
+      <div className={styles.dashboardHeader}>
         <div>
-          <h1 className="dashboard-title">Dashboard Overview</h1>
-          <p className="dashboard-subtitle">
+          <h1 className={styles.dashboardTitle}>Dashboard Overview</h1>
+          <p className={styles.dashboardSubtitle}>
             Welcome back, Admin! Here's what's happening with your CBET
             platform.
           </p>
         </div>
 
-        <div className="header-actions">
-          <div className="date-range">
-            <FiCalendar className="date-icon" />
+        <div className={styles.headerActions}>
+          <div className={styles.dateRange}>
+            <FiCalendar className={styles.dateIcon} />
             <select
-              className="date-select"
+              className={styles.dateSelect}
               value={timeRange}
               onChange={(e) => setTimeRange(e.target.value)}
             >
@@ -180,7 +180,7 @@ function AdminDashboard() {
             </select>
           </div>
 
-          <button className="export-btn">
+          <button className={styles.exportBtn}>
             <FiDownload />
             Export Report
           </button>
@@ -188,20 +188,20 @@ function AdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="stats-grid">
+      <div className={styles.statsGrid}>
         {statsData.map((stat, index) => (
-          <div key={index} className="stat-card">
+          <div key={index} className={styles.statCard}>
             <div
-              className="stat-icon"
+              className={styles.statIcon}
               style={{ backgroundColor: stat.bgColor, color: stat.color }}
             >
               <stat.icon />
             </div>
-            <div className="stat-content">
-              <h3 className="stat-title">{stat.title}</h3>
-              <div className="stat-value-row">
-                <span className="stat-value">{stat.value}</span>
-                <span className={`stat-change ${stat.trend}`}>
+            <div className={styles.statContent}>
+              <h3 className={styles.statTitle}>{stat.title}</h3>
+              <div className={styles.statValueRow}>
+                <span className={styles.statValue}>{stat.value}</span>
+                <span className={`${styles.statChange} ${styles[stat.trend]}`}>
                   {stat.trend === "up" ? <FiTrendingUp /> : <FiTrendingDown />}
                   {stat.change}
                 </span>
@@ -212,34 +212,34 @@ function AdminDashboard() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="dashboard-grid">
+      <div className={styles.dashboardGrid}>
         {/* Course Progress Section */}
-        <div className="dashboard-card course-progress-card">
-          <div className="card-header">
+        <div className={`${styles.dashboardCard} ${styles.courseProgressCard}`}>
+          <div className={styles.cardHeader}>
             <h2>Course Progress Overview</h2>
-            <button className="more-btn">
+            <button className={styles.moreBtn}>
               <FiMoreVertical />
             </button>
           </div>
 
-          <div className="progress-list">
+          <div className={styles.progressList}>
             {courseProgress.map((course, index) => (
-              <div key={index} className="progress-item">
-                <div className="progress-info">
-                  <span className="progress-course">{course.name}</span>
-                  <span className="progress-students">
+              <div key={index} className={styles.progressItem}>
+                <div className={styles.progressInfo}>
+                  <span className={styles.progressCourse}>{course.name}</span>
+                  <span className={styles.progressStudents}>
                     {course.students} students
                   </span>
                 </div>
-                <div className="progress-bar-container">
+                <div className={styles.progressBarContainer}>
                   <div
-                    className="progress-bar"
+                    className={styles.progressBar}
                     style={{
                       width: `${course.progress}%`,
                       backgroundColor: course.color,
                     }}
                   />
-                  <span className="progress-percentage">
+                  <span className={styles.progressPercentage}>
                     {course.progress}%
                   </span>
                 </div>
@@ -247,32 +247,32 @@ function AdminDashboard() {
             ))}
           </div>
 
-          <div className="card-footer">
-            <a href="/admin/courses" className="view-all-link">
+          <div className={styles.cardFooter}>
+            <a href="/admin/courses" className={styles.viewAllLink}>
               View all courses →
             </a>
           </div>
         </div>
 
         {/* Competency Distribution */}
-        <div className="dashboard-card competency-card">
-          <div className="card-header">
+        <div className={`${styles.dashboardCard} ${styles.competencyCard}`}>
+          <div className={styles.cardHeader}>
             <h2>Competency Distribution</h2>
-            <button className="more-btn">
+            <button className={styles.moreBtn}>
               <FiMoreVertical />
             </button>
           </div>
 
-          <div className="competency-chart">
+          <div className={styles.competencyChart}>
             {competencyDistribution.map((item, index) => (
-              <div key={index} className="competency-bar-item">
-                <div className="competency-bar-label">
+              <div key={index} className={styles.competencyBarItem}>
+                <div className={styles.competencyBarLabel}>
                   <span>{item.level}</span>
-                  <span className="competency-count">{item.count}</span>
+                  <span className={styles.competencyCount}>{item.count}</span>
                 </div>
-                <div className="competency-bar-container">
+                <div className={styles.competencyBarContainer}>
                   <div
-                    className="competency-bar"
+                    className={styles.competencyBar}
                     style={{
                       width: `${(item.count / 156) * 100}%`,
                       backgroundColor: item.color,
@@ -283,45 +283,52 @@ function AdminDashboard() {
             ))}
           </div>
 
-          <div className="competency-stats">
-            <div className="stat-item">
-              <span className="stat-label">Total Competencies</span>
-              <span className="stat-number">156</span>
+          <div className={styles.competencyStats}>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>Total Competencies</span>
+              <span className={styles.statNumber}>156</span>
             </div>
-            <div className="stat-item">
-              <span className="stat-label">Assessed</span>
-              <span className="stat-number">89</span>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>Assessed</span>
+              <span className={styles.statNumber}>89</span>
             </div>
-            <div className="stat-item">
-              <span className="stat-label">In Progress</span>
-              <span className="stat-number">45</span>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>In Progress</span>
+              <span className={styles.statNumber}>45</span>
             </div>
           </div>
         </div>
 
         {/* Upcoming Deadlines */}
-        <div className="dashboard-card deadlines-card">
-          <div className="card-header">
+        <div className={`${styles.dashboardCard} ${styles.deadlinesCard}`}>
+          <div className={styles.cardHeader}>
             <h2>Upcoming Deadlines</h2>
-            <span className="badge">{upcomingDeadlines.length} pending</span>
+            <span className={styles.badge}>
+              {upcomingDeadlines.length} pending
+            </span>
           </div>
 
-          <div className="deadlines-list">
+          <div className={styles.deadlinesList}>
             {upcomingDeadlines.map((deadline, index) => (
-              <div key={index} className={`deadline-item ${deadline.status}`}>
-                <div className="deadline-header">
+              <div
+                key={index}
+                className={`${styles.deadlineItem} ${styles[deadline.status]}`}
+              >
+                <div className={styles.deadlineHeader}>
                   <h3>{deadline.assessment}</h3>
-                  <span className={`status-badge ${deadline.status}`}>
+                  <span
+                    className={`${styles.statusBadge} ${styles[deadline.status]}`}
+                  >
                     {deadline.status}
                   </span>
                 </div>
-                <p className="deadline-course">{deadline.course}</p>
-                <div className="deadline-meta">
-                  <div className="deadline-date">
+                <p className={styles.deadlineCourse}>{deadline.course}</p>
+                <div className={styles.deadlineMeta}>
+                  <div className={styles.deadlineDate}>
                     <FiClock />
                     Due: {new Date(deadline.dueDate).toLocaleDateString()}
                   </div>
-                  <div className="deadline-submissions">
+                  <div className={styles.deadlineSubmissions}>
                     Submissions: {deadline.submissions}/{deadline.total}
                   </div>
                 </div>
@@ -329,49 +336,49 @@ function AdminDashboard() {
             ))}
           </div>
 
-          <div className="card-footer">
-            <a href="/admin/assessments" className="view-all-link">
+          <div className={styles.cardFooter}>
+            <a href="/admin/assessments" className={styles.viewAllLink}>
               Manage assessments →
             </a>
           </div>
         </div>
 
         {/* Recent Activity */}
-        <div className="dashboard-card activity-card">
-          <div className="card-header">
+        <div className={`${styles.dashboardCard} ${styles.activityCard}`}>
+          <div className={styles.cardHeader}>
             <h2>Recent Activity</h2>
-            <div className="search-box">
-              <FiSearch className="search-icon" />
+            <div className={styles.searchBox}>
+              <FiSearch className={styles.searchIcon} />
               <input type="text" placeholder="Search activities..." />
             </div>
           </div>
 
-          <div className="activity-list">
+          <div className={styles.activityList}>
             {recentActivities.map((activity, index) => (
-              <div key={index} className="activity-item">
+              <div key={index} className={styles.activityItem}>
                 <div
-                  className="activity-avatar"
+                  className={styles.activityAvatar}
                   style={{
                     background: `linear-gradient(135deg, ${getAvatarColor(activity.type)} 0%, ${getAvatarColor(activity.type, true)} 100%)`,
                   }}
                 >
                   {activity.avatar}
                 </div>
-                <div className="activity-content">
-                  <p className="activity-text">
+                <div className={styles.activityContent}>
+                  <p className={styles.activityText}>
                     <strong>{activity.user}</strong> {activity.action}{" "}
-                    <span className="activity-item-highlight">
+                    <span className={styles.activityItemHighlight}>
                       {activity.item}
                     </span>
                   </p>
-                  <span className="activity-time">{activity.time}</span>
+                  <span className={styles.activityTime}>{activity.time}</span>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="card-footer">
-            <a href="/admin/analytics" className="view-all-link">
+          <div className={styles.cardFooter}>
+            <a href="/admin/analytics" className={styles.viewAllLink}>
               View all activity →
             </a>
           </div>
@@ -379,22 +386,22 @@ function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="quick-actions">
+      <div className={styles.quickActions}>
         <h2>Quick Actions</h2>
-        <div className="actions-grid">
-          <button className="action-btn">
+        <div className={styles.actionsGrid}>
+          <button className={styles.actionBtn}>
             <FiUsers />
             Add New User
           </button>
-          <button className="action-btn">
+          <button className={styles.actionBtn}>
             <FiBook />
             Create Course
           </button>
-          <button className="action-btn">
+          <button className={styles.actionBtn}>
             <FiAward />
             Add Competency
           </button>
-          <button className="action-btn">
+          <button className={styles.actionBtn}>
             <FiFileText />
             Create Assessment
           </button>

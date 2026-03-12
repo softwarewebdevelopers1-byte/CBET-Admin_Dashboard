@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
-import "../styles/sidebar.css";
+// SideBar.jsx
+import { NavLink, useNavigate } from "react-router-dom";
+import styles from "../styles/sidebar.module.css";
 
 // You'll need to install react-icons if you haven't already:
 // npm install react-icons
@@ -20,10 +21,9 @@ import {
 } from "react-icons/fi";
 
 function SideBar({ isCollapsed, setIsCollapsed }) {
-
   const menuItems = [
     { path: "/", icon: FiHome, label: "Dashboard" },
-    { path: "/admin/users", icon: FiUsers, label: "Users" },
+    { path: "/users", icon: FiUsers, label: "Users" },
     { path: "/admin/courses", icon: FiBook, label: "Courses" },
     { path: "/admin/competencies", icon: FiAward, label: "Competencies" },
     { path: "/admin/assessments", icon: FiFileText, label: "Assessments" },
@@ -32,57 +32,76 @@ function SideBar({ isCollapsed, setIsCollapsed }) {
     { path: "/admin/settings", icon: FiSettings, label: "Settings" },
     { path: "/help", icon: FiHelpCircle, label: "Help" },
   ];
+  let navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsCollapsed((prev) => !prev);
   };
-
+  async function logOut() {
+    let res = await fetch("http://localhost:8000/auth/all/admin/logout/all", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (res.status === 200) {
+      navigate("/");
+    }
+  }
   return (
-    <div className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
-      <div className="sidebar-header">
-        <div className="logo-container">
+    <div className={`${styles.sidebar} ${isCollapsed ? styles.collapsed : ""}`}>
+      <div className={styles.sidebarHeader}>
+        <div className={styles.logoContainer}>
           {!isCollapsed && (
             <>
-              <span className="logo-text">CBET Admin</span>
-              <span className="logo-badge">v2.0</span>
+              <span className={styles.logoText}>CBET Admin</span>
+              <span className={styles.logoBadge}>v2.0</span>
             </>
           )}
-          {isCollapsed && <span className="logo-mini">C</span>}
+          {isCollapsed && <span className={styles.logoMini}>C</span>}
         </div>
-        <button className="toggle-btn" onClick={toggleSidebar}>
+        <button className={styles.toggleBtn} onClick={toggleSidebar}>
           {isCollapsed ? <FiMenu /> : <FiChevronLeft />}
         </button>
       </div>
 
-      <nav className="sidebar-nav">
+      <nav className={styles.sidebarNav}>
         {menuItems.map((item, index) => (
-          <Link
+          <NavLink
             key={index}
             to={item.path}
-            className="nav-link"
+            className={({ isActive }) =>
+              `${styles.navLink} ${isActive ? styles.active : ""}`
+            }
             title={isCollapsed ? item.label : ""}
           >
-            <item.icon className="nav-icon" />
-            {!isCollapsed && <span className="nav-label">{item.label}</span>}
-            {!isCollapsed && item.label === "Competencies" && (
-              <span className="nav-badge">12</span>
+            <item.icon className={styles.navIcon} />
+            {!isCollapsed && (
+              <span className={styles.navLabel}>{item.label}</span>
             )}
-          </Link>
+            {!isCollapsed && item.label === "Competencies" && (
+              <span className={styles.navBadge}>12</span>
+            )}
+          </NavLink>
         ))}
       </nav>
 
-      <div className="sidebar-footer">
-        <div className="user-info">
-          <div className="user-avatar">A</div>
+      <div className={styles.sidebarFooter}>
+        <div className={styles.userInfo}>
+          <div className={styles.userAvatar}>A</div>
           {!isCollapsed && (
-            <div className="user-details">
-              <span className="user-name">Admin User</span>
-              <span className="user-role">Super Admin</span>
+            <div className={styles.userDetails}>
+              <span className={styles.userName}>Admin User</span>
+              <span className={styles.userRole}>Super Admin</span>
             </div>
           )}
         </div>
-        <button className="logout-btn" title="Logout">
-          <FiLogOut className="logout-icon" />
+        <button
+          className={styles.logoutBtn}
+          onClick={() => {
+            logOut();
+          }}
+          title="Logout"
+        >
+          <FiLogOut className={styles.logoutIcon} />
           {!isCollapsed && <span>Logout</span>}
         </button>
       </div>

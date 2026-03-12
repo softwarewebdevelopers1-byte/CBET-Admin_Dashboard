@@ -1,4 +1,4 @@
-/* SideBar.css */
+/* sidebar.module.css */
 .sidebar {
   width: 260px;
   height: 100vh;
@@ -11,6 +11,7 @@
   left: 0;
   top: 0;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
 .sidebar.collapsed {
@@ -18,7 +19,7 @@
 }
 
 /* Header Styles */
-.sidebar-header {
+.sidebarHeader {
   padding: 20px 16px;
   display: flex;
   align-items: center;
@@ -26,13 +27,13 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.logo-container {
+.logoContainer {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.logo-text {
+.logoText {
   font-size: 18px;
   font-weight: 600;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -41,7 +42,7 @@
   background-clip: text;
 }
 
-.logo-badge {
+.logoBadge {
   font-size: 10px;
   padding: 2px 6px;
   background: rgba(102, 126, 234, 0.2);
@@ -49,13 +50,13 @@
   color: #667eea;
 }
 
-.logo-mini {
+.logoMini {
   font-size: 24px;
   font-weight: 700;
   color: #667eea;
 }
 
-.toggle-btn {
+.toggleBtn {
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #fff;
@@ -69,12 +70,12 @@
   transition: background 0.3s;
 }
 
-.toggle-btn:hover {
+.toggleBtn:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
 /* Navigation Styles */
-.sidebar-nav {
+.sidebarNav {
   flex: 1;
   padding: 20px 12px;
   display: flex;
@@ -83,7 +84,31 @@
   overflow-y: auto;
 }
 
-.nav-link {
+/* Custom scrollbar for sidebarNav */
+.sidebarNav::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebarNav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sidebarNav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.sidebarNav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Firefox support */
+.sidebarNav {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+
+.navLink {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -95,29 +120,29 @@
   position: relative;
 }
 
-.nav-link:hover {
+.navLink:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
-.nav-link.active {
+.navLink.active {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: #fff;
   box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
 }
 
-.nav-icon {
+.navIcon {
   font-size: 20px;
   min-width: 20px;
 }
 
-.nav-label {
+.navLabel {
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
 }
 
-.nav-badge {
+.navBadge {
   position: absolute;
   right: 16px;
   background: #ff6b6b;
@@ -130,19 +155,19 @@
 }
 
 /* Footer Styles */
-.sidebar-footer {
+.sidebarFooter {
   padding: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.user-info {
+.userInfo {
   display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 12px;
 }
 
-.user-avatar {
+.userAvatar {
   width: 36px;
   height: 36px;
   border-radius: 10px;
@@ -154,22 +179,22 @@
   font-size: 16px;
 }
 
-.user-details {
+.userDetails {
   display: flex;
   flex-direction: column;
 }
 
-.user-name {
+.userName {
   font-size: 14px;
   font-weight: 600;
 }
 
-.user-role {
+.userRole {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
 }
 
-.logout-btn {
+.logoutBtn {
   width: 100%;
   display: flex;
   align-items: center;
@@ -184,34 +209,26 @@
   font-size: 14px;
 }
 
-.logout-btn:hover {
+.logoutBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #ff6b6b;
 }
 
-.logout-icon {
+.logoutIcon {
   font-size: 18px;
 }
 
-/* Scrollbar Styles */
-.sidebar-nav::-webkit-scrollbar {
-  width: 4px;
-}
-
-.sidebar-nav::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 70px;
+  }
+
+  .sidebar:not(.collapsed) {
+    width: 260px;
+  }
+}
+
 @media (max-width: 768px) {
   .sidebar {
     width: 70px;
@@ -221,5 +238,6 @@
     width: 260px;
     position: fixed;
     z-index: 1000;
+    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3);
   }
 }
