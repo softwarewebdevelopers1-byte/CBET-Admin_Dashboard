@@ -1,9 +1,8 @@
 // UsersPage.jsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FiUsers,
   FiSearch,
-  FiFilter,
   FiPlus,
   FiEdit2,
   FiTrash2,
@@ -12,14 +11,12 @@ import {
   FiUserX,
   FiMail,
   FiPhone,
-  FiCalendar,
   FiAward,
   FiBook,
   FiClock,
   FiDownload,
   FiUpload,
   FiX,
-  FiCheck,
   FiEye,
   FiLock,
   FiUnlock,
@@ -28,205 +25,133 @@ import styles from "../styles/usersPage.module.css";
 
 function UsersPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedRole, setSelectedRole] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
+  const [users, setUsers] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [selectedUserId, setSelectedUserId] = useState(null); // Changed to single selection
   const [currentPage, setCurrentPage] = useState(1);
   const [editingUser, setEditingUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Sample users data
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      phone: "+1 234-567-8901",
-      role: "student",
-      status: "active",
-      avatar: "JD",
-      enrolledCourses: 4,
-      completedCourses: 2,
-      competencies: 8,
-      lastActive: "2024-01-15T10:30:00",
-      joinDate: "2023-09-01",
-    },
-    {
-      id: 2,
-      name: "Sarah Smith",
-      email: "sarah.smith@example.com",
-      phone: "+1 234-567-8902",
-      role: "instructor",
-      status: "active",
-      avatar: "SS",
-      enrolledCourses: 0,
-      completedCourses: 0,
-      competencies: 15,
-      lastActive: "2024-01-16T09:15:00",
-      joinDate: "2023-08-15",
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike.johnson@example.com",
-      phone: "+1 234-567-8903",
-      role: "student",
-      status: "inactive",
-      avatar: "MJ",
-      enrolledCourses: 2,
-      completedCourses: 1,
-      competencies: 3,
-      lastActive: "2024-01-10T14:20:00",
-      joinDate: "2023-10-10",
-    },
-    {
-      id: 4,
-      name: "Emily Brown",
-      email: "emily.brown@example.com",
-      phone: "+1 234-567-8904",
-      role: "student",
-      status: "active",
-      avatar: "EB",
-      enrolledCourses: 3,
-      completedCourses: 3,
-      competencies: 12,
-      lastActive: "2024-01-16T11:45:00",
-      joinDate: "2023-07-22",
-    },
-    {
-      id: 5,
-      name: "David Wilson",
-      email: "david.wilson@example.com",
-      phone: "+1 234-567-8905",
-      role: "admin",
-      status: "active",
-      avatar: "DW",
-      enrolledCourses: 0,
-      completedCourses: 0,
-      competencies: 20,
-      lastActive: "2024-01-16T08:30:00",
-      joinDate: "2023-06-05",
-    },
-    {
-      id: 6,
-      name: "Lisa Anderson",
-      email: "lisa.anderson@example.com",
-      phone: "+1 234-567-8906",
-      role: "instructor",
-      status: "active",
-      avatar: "LA",
-      enrolledCourses: 0,
-      completedCourses: 0,
-      competencies: 18,
-      lastActive: "2024-01-15T16:20:00",
-      joinDate: "2023-08-30",
-    },
-    {
-      id: 7,
-      name: "Tom Martinez",
-      email: "tom.martinez@example.com",
-      phone: "+1 234-567-8907",
-      role: "student",
-      status: "suspended",
-      avatar: "TM",
-      enrolledCourses: 1,
-      completedCourses: 0,
-      competencies: 2,
-      lastActive: "2024-01-05T13:10:00",
-      joinDate: "2023-11-15",
-    },
-    {
-      id: 8,
-      name: "Rachel Lee",
-      email: "rachel.lee@example.com",
-      phone: "+1 234-567-8908",
-      role: "student",
-      status: "active",
-      avatar: "RL",
-      enrolledCourses: 5,
-      completedCourses: 2,
-      competencies: 6,
-      lastActive: "2024-01-16T10:00:00",
-      joinDate: "2023-09-20",
-    },
-  ]);
+  // Fetch users from backend
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
-  // Filter options
-  const roles = ["all", "student", "instructor", "admin"];
-  const statuses = ["all", "active", "inactive", "suspended"];
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      let response = await fetch("http://localhost:8000/auth/find/users", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
 
-  // Filter users based on search, role, and status
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      let data = await response.json();
+
+      // Handle different response structures
+      const usersArray = data.Users || data.users || data || [];
+
+      // Map backend data to frontend structure
+      const mappedUsers = usersArray.map((user, index) => ({
+        id: user.id || user._id || index + 1,
+        name: user.name || user.email || "Unknown User",
+        email: user.email || "",
+        phone: user.phone || user.mobile || "N/A",
+        role: user.role || "student",
+        status: user.status || "active",
+        avatar: user.name ? user.name.charAt(0).toUpperCase() : "U",
+        enrolledCourses: user.enrolledCourses || user.courses?.length || 0,
+        competencies: user.competencies || user.skills?.length || 0,
+        lastActive:
+          user.lastActive || user.lastLogin || new Date().toISOString(),
+      }));
+
+      setUsers(mappedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter users based on search only
   const filteredUsers = users.filter((user) => {
-    const matchesSearch =
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRole = selectedRole === "all" || user.role === selectedRole;
-    const matchesStatus =
-      selectedStatus === "all" || user.status === selectedStatus;
-
-    return matchesSearch && matchesRole && matchesStatus;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      (user.name?.toLowerCase() || "").includes(searchLower) ||
+      (user.email?.toLowerCase() || "").includes(searchLower) ||
+      (user.role?.toLowerCase() || "").includes(searchLower) ||
+      (user.status?.toLowerCase() || "").includes(searchLower)
+    );
   });
 
   // Pagination
-  const usersPerPage = 5;
+  const usersPerPage = 10;
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
   const paginatedUsers = filteredUsers.slice(
     (currentPage - 1) * usersPerPage,
     currentPage * usersPerPage,
   );
 
-  // Handle user selection
+  // Handle user selection (single only)
   const toggleUserSelection = (userId) => {
-    setSelectedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId],
-    );
-  };
-
-  const toggleAllUsers = () => {
-    if (selectedUsers.length === paginatedUsers.length) {
-      setSelectedUsers([]);
-    } else {
-      setSelectedUsers(paginatedUsers.map((user) => user.id));
-    }
+    setSelectedUserId(selectedUserId === userId ? null : userId);
   };
 
   // Handle user actions
   const handleEditUser = (user) => {
     setEditingUser(user);
     setShowAddModal(true);
+    setSelectedUserId(null); // Clear selection when editing
   };
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = async (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter((user) => user.id !== userId));
-      setSelectedUsers(selectedUsers.filter((id) => id !== userId));
+      try {
+        // Call API to delete user
+        await fetch(`http://localhost:8000/auth/users/${userId}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        setUsers(users.filter((user) => user.id !== userId));
+        if (selectedUserId === userId) {
+          setSelectedUserId(null); // Clear selection if deleted user was selected
+        }
+      } catch (error) {
+        console.error("Error deleting user:", error);
+        alert("Failed to delete user. Please try again.");
+      }
     }
   };
 
-  const handleBulkDelete = () => {
-    if (
-      window.confirm(
-        `Are you sure you want to delete ${selectedUsers.length} users?`,
-      )
-    ) {
-      setUsers(users.filter((user) => !selectedUsers.includes(user.id)));
-      setSelectedUsers([]);
-    }
-  };
+  const handleStatusChange = async (userId, newStatus) => {
+    try {
+      await fetch(`http://localhost:8000/auth/users/${userId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: newStatus }),
+      });
 
-  const handleStatusChange = (userId, newStatus) => {
-    setUsers(
-      users.map((user) =>
-        user.id === userId ? { ...user, status: newStatus } : user,
-      ),
-    );
+      setUsers(
+        users.map((user) =>
+          user.id === userId ? { ...user, status: newStatus } : user,
+        ),
+      );
+    } catch (error) {
+      console.error("Error updating user status:", error);
+      alert("Failed to update user status. Please try again.");
+    }
   };
 
   // Get role badge color
   const getRoleColor = (role) => {
-    switch (role) {
+    switch (role?.toLowerCase()) {
       case "admin":
         return "#f56565";
       case "instructor":
@@ -240,7 +165,7 @@ function UsersPage() {
 
   // Get status badge color
   const getStatusColor = (status) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case "active":
         return "#48bb78";
       case "inactive":
@@ -251,6 +176,15 @@ function UsersPage() {
         return "#a0aec0";
     }
   };
+
+  if (loading) {
+    return (
+      <div className={styles.loadingContainer}>
+        <div className={styles.spinner}></div>
+        <p>Loading users...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.usersPage}>
@@ -295,7 +229,7 @@ function UsersPage() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statLabel}>Total Users</span>
-            <span className={styles.statValue}>{JSON.parse(localStorage.getItem("userCount")) || 0}</span>
+            <span className={styles.statValue}>{users.length}</span>
           </div>
         </div>
         <div className={styles.statCard}>
@@ -336,71 +270,51 @@ function UsersPage() {
           <div className={styles.statContent}>
             <span className={styles.statLabel}>Total Competencies</span>
             <span className={styles.statValue}>
-              {users.reduce((acc, user) => acc + user.competencies, 0)}
+              {users.reduce((acc, user) => acc + (user.competencies || 0), 0)}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Filters and Search */}
-      <div className={styles.filtersSection}>
+      {/* Search Only */}
+      <div className={styles.searchSection}>
         <div className={styles.searchBox}>
           <FiSearch className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Search users by name or email..."
+            placeholder="Search users by name, email, role, or status..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); // Reset to first page on search
+              setSelectedUserId(null); // Clear selection on search
+            }}
           />
-        </div>
-
-        <div className={styles.filterGroup}>
-          <FiFilter className={styles.filterIcon} />
-          <select
-            value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value)}
-            className={styles.filterSelect}
-          >
-            {roles.map((role) => (
-              <option key={role} value={role}>
-                {role === "all"
-                  ? "All Roles"
-                  : role.charAt(0).toUpperCase() + role.slice(1)}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className={styles.filterSelect}
-          >
-            {statuses.map((status) => (
-              <option key={status} value={status}>
-                {status === "all"
-                  ? "All Status"
-                  : status.charAt(0).toUpperCase() + status.slice(1)}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 
-      {/* Bulk Actions */}
-      {selectedUsers.length > 0 && (
-        <div className={styles.bulkActions}>
-          <span className={styles.selectedCount}>
-            {selectedUsers.length} user(s) selected
-          </span>
-          <button className={styles.bulkDeleteBtn} onClick={handleBulkDelete}>
+      {/* Selected User Actions - Shows only when a user is selected */}
+      {selectedUserId && (
+        <div className={styles.selectedActions}>
+          <span className={styles.selectedCount}>1 user selected</span>
+          <button
+            className={styles.deleteBtn}
+            onClick={() => handleDeleteUser(selectedUserId)}
+          >
             <FiTrash2 />
-            Delete Selected
+            Delete
           </button>
-          <button className={styles.bulkActionBtn}>
+          <button
+            className={styles.actionBtn}
+            onClick={() => handleStatusChange(selectedUserId, "suspended")}
+          >
             <FiLock />
             Suspend
           </button>
-          <button className={styles.bulkActionBtn}>
+          <button
+            className={styles.actionBtn}
+            onClick={() => handleStatusChange(selectedUserId, "active")}
+          >
             <FiUnlock />
             Activate
           </button>
@@ -412,35 +326,30 @@ function UsersPage() {
         <table className={styles.usersTable}>
           <thead>
             <tr>
-              <th>
-                <input
-                  type="checkbox"
-                  checked={
-                    selectedUsers.length === paginatedUsers.length &&
-                    paginatedUsers.length > 0
-                  }
-                  onChange={toggleAllUsers}
-                  className={styles.checkbox}
-                />
-              </th>
+              <th style={{ width: "40px" }}>Select</th>
               <th>User</th>
-              <th>Contact</th>
               <th>Role</th>
               <th>Status</th>
               <th>Progress</th>
               <th>Last Active</th>
-              <th>Actions</th>
+              <th style={{ width: "120px" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
             {paginatedUsers.map((user) => (
-              <tr key={user.id} className={styles.tableRow}>
-                <td>
+              <tr
+                key={user.id}
+                className={`${styles.tableRow} ${selectedUserId === user.id ? styles.selectedRow : ""}`}
+                onClick={() => toggleUserSelection(user.id)}
+                style={{ cursor: "pointer" }}
+              >
+                <td onClick={(e) => e.stopPropagation()}>
                   <input
-                    type="checkbox"
-                    checked={selectedUsers.includes(user.id)}
+                    type="radio"
+                    name="userSelection"
+                    checked={selectedUserId === user.id}
                     onChange={() => toggleUserSelection(user.id)}
-                    className={styles.checkbox}
+                    className={styles.radio}
                   />
                 </td>
                 <td>
@@ -451,7 +360,7 @@ function UsersPage() {
                         background: `linear-gradient(135deg, ${getRoleColor(user.role)} 0%, ${getRoleColor(user.role)}80 100%)`,
                       }}
                     >
-                      {user.avatar}
+                      {user.avatar || user.name?.charAt(0) || "U"}
                     </div>
                     <div className={styles.userInfo}>
                       <span className={styles.userName}>{user.name}</span>
@@ -460,21 +369,12 @@ function UsersPage() {
                   </div>
                 </td>
                 <td>
-                  <div className={styles.contactInfo}>
-                    <span className={styles.contactItem}>
-                      <FiMail /> {user.email}
-                    </span>
-                    <span className={styles.contactItem}>
-                      <FiPhone /> {user.phone}
-                    </span>
-                  </div>
-                </td>
-                <td>
                   <span
                     className={styles.roleBadge}
                     style={{
                       background: `${getRoleColor(user.role)}20`,
                       color: getRoleColor(user.role),
+                      border: `1px solid ${getRoleColor(user.role)}40`,
                     }}
                   >
                     {user.role}
@@ -486,6 +386,7 @@ function UsersPage() {
                     style={{
                       background: `${getStatusColor(user.status)}20`,
                       color: getStatusColor(user.status),
+                      border: `1px solid ${getStatusColor(user.status)}40`,
                     }}
                   >
                     {user.status}
@@ -495,11 +396,11 @@ function UsersPage() {
                   <div className={styles.progressInfo}>
                     <div className={styles.progressItem}>
                       <FiBook />
-                      <span>{user.enrolledCourses} enrolled</span>
+                      <span>{user.enrolledCourses || 0} enrolled</span>
                     </div>
                     <div className={styles.progressItem}>
                       <FiAward />
-                      <span>{user.competencies} competencies</span>
+                      <span>{user.competencies || 0} competencies</span>
                     </div>
                   </div>
                 </td>
@@ -507,11 +408,13 @@ function UsersPage() {
                   <div className={styles.lastActive}>
                     <FiClock />
                     <span>
-                      {new Date(user.lastActive).toLocaleDateString()}
+                      {user.lastActive
+                        ? new Date(user.lastActive).toLocaleDateString()
+                        : "N/A"}
                     </span>
                   </div>
                 </td>
-                <td>
+                <td onClick={(e) => e.stopPropagation()}>
                   <div className={styles.actionButtons}>
                     <button
                       className={styles.actionBtn}
@@ -561,7 +464,7 @@ function UsersPage() {
           <div className={styles.emptyState}>
             <FiUsers className={styles.emptyIcon} />
             <h3>No users found</h3>
-            <p>Try adjusting your search or filter criteria</p>
+            <p>Try adjusting your search criteria</p>
           </div>
         )}
       </div>
@@ -572,7 +475,10 @@ function UsersPage() {
           <button
             className={styles.pageBtn}
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage(currentPage - 1)}
+            onClick={() => {
+              setCurrentPage(currentPage - 1);
+              setSelectedUserId(null); // Clear selection on page change
+            }}
           >
             Previous
           </button>
@@ -581,7 +487,10 @@ function UsersPage() {
               <button
                 key={page}
                 className={`${styles.pageNumber} ${currentPage === page ? styles.active : ""}`}
-                onClick={() => setCurrentPage(page)}
+                onClick={() => {
+                  setCurrentPage(page);
+                  setSelectedUserId(null); // Clear selection on page change
+                }}
               >
                 {page}
               </button>
@@ -590,7 +499,10 @@ function UsersPage() {
           <button
             className={styles.pageBtn}
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage(currentPage + 1)}
+            onClick={() => {
+              setCurrentPage(currentPage + 1);
+              setSelectedUserId(null); // Clear selection on page change
+            }}
           >
             Next
           </button>
@@ -605,33 +517,62 @@ function UsersPage() {
             setShowAddModal(false);
             setEditingUser(null);
           }}
-          onSave={(userData) => {
-            if (editingUser) {
-              // Edit existing user
-              setUsers(
-                users.map((u) =>
-                  u.id === editingUser.id ? { ...u, ...userData } : u,
-                ),
-              );
-            } else {
-              // Add new user
-              const newUser = {
-                id: users.length + 1,
-                ...userData,
-                avatar: userData.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join(""),
-                enrolledCourses: 0,
-                completedCourses: 0,
-                competencies: 0,
-                lastActive: new Date().toISOString(),
-                joinDate: new Date().toISOString().split("T")[0],
-              };
-              setUsers([...users, newUser]);
+          onSave={async (userData) => {
+            try {
+              if (editingUser) {
+                // Edit existing user
+                const response = await fetch(
+                  `http://localhost:8000/auth/users/${editingUser.id}`,
+                  {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(userData),
+                  },
+                );
+
+                if (response.ok) {
+                  const updatedUser = await response.json();
+                  setUsers(
+                    users.map((u) =>
+                      u.id === editingUser.id ? { ...u, ...updatedUser } : u,
+                    ),
+                  );
+                }
+              } else {
+                // Add new user
+                const response = await fetch(
+                  "http://localhost:8000/auth/users",
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify(userData),
+                  },
+                );
+
+                if (response.ok) {
+                  const newUser = await response.json();
+                  setUsers([
+                    ...users,
+                    {
+                      ...newUser,
+                      id: newUser.id || newUser._id || users.length + 1,
+                      avatar: newUser.name?.charAt(0) || "U",
+                      enrolledCourses: 0,
+                      competencies: 0,
+                      lastActive: new Date().toISOString(),
+                    },
+                  ]);
+                }
+              }
+              setShowAddModal(false);
+              setEditingUser(null);
+              setSelectedUserId(null); // Clear selection after save
+            } catch (error) {
+              console.error("Error saving user:", error);
+              alert("Failed to save user. Please try again.");
             }
-            setShowAddModal(false);
-            setEditingUser(null);
           }}
         />
       )}

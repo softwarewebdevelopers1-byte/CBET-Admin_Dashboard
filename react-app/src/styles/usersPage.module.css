@@ -727,7 +727,67 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
+/* Selected row highlighting */
+.selectedRow {
+  background-color: rgba(66, 153, 225, 0.1) !important;
+  border-left: 3px solid #4299e1;
+}
 
+/* Radio button styling */
+.radio {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #4299e1;
+}
+
+/* Selected actions bar (replaces bulkActions) */
+.selectedActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.selectedCount {
+  font-weight: 600;
+  color: #2563eb;
+  margin-right: auto;
+}
+
+/* Delete button (red variant) */
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  color: #ef4444;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.deleteBtn:hover {
+  background: #fee2e2;
+  transform: translateY(-1px);
+}
+
+/* Table row cursor */
+.tableRow {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+  background-color: #f1f5f9;
+}
 /* Responsive Design */
 @media (max-width: 1024px) {
   .statsGrid {
