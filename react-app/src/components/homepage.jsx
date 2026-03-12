@@ -29,9 +29,9 @@ function AdminDashboard() {
       });
       const data = await res.json();
       resetCount(data.count);
+      localStorage.setItem("userCount", data.count);
     })();
   }, []);
-
   // Sample data for statistics
   const statsData = [
     {
