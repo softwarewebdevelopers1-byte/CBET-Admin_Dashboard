@@ -22,7 +22,7 @@ import {
 
 function SideBar({ isCollapsed, setIsCollapsed }) {
   const menuItems = [
-    { path: "/", icon: FiHome, label: "Dashboard" },
+    { path: "/admin", icon: FiHome, label: "Dashboard" },
     { path: "/users", icon: FiUsers, label: "Users" },
     { path: "/admin/courses", icon: FiBook, label: "Courses" },
     { path: "/admin/competencies", icon: FiAward, label: "Competencies" },
