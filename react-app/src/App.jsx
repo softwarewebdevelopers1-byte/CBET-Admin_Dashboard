@@ -20,7 +20,7 @@ function App() {
           }
         />
         <Route
-          path="/admin/users"
+          path="/users"
           element={
             <Dashboard>
               <UsersPage />
