@@ -295,7 +295,7 @@ function UsersPage() {
           </div>
           <div className={styles.statContent}>
             <span className={styles.statLabel}>Total Users</span>
-            <span className={styles.statValue}>{users.length}</span>
+            <span className={styles.statValue}>{JSON.parse(localStorage.getItem("userCount")) || 0}</span>
           </div>
         </div>
         <div className={styles.statCard}>
