@@ -24,7 +24,7 @@ function SideBar({ isCollapsed, setIsCollapsed }) {
   const menuItems = [
     { path: "/admin", icon: FiHome, label: "Dashboard" },
     { path: "/users", icon: FiUsers, label: "Users" },
-    { path: "/admin/courses", icon: FiBook, label: "Courses" },
+    { path: "/courses", icon: FiBook, label: "Courses" },
     { path: "/admin/competencies", icon: FiAward, label: "Competencies" },
     { path: "/admin/assessments", icon: FiFileText, label: "Assessments" },
     { path: "/admin/schedule", icon: FiCalendar, label: "Schedule" },

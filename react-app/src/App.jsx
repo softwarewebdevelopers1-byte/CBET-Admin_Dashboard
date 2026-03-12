@@ -5,12 +5,13 @@ import UsersPage from "./components/users.jsx";
 import Dashboard from "./components/dashboard.jsx";
 import AdminDashboard from "./components/homepage.jsx";
 import LoginPage from "./components/login.jsx";
+import AdminCourses from "./components/courses.jsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<LoginPage/>}/>
+        <Route path="/" element={<LoginPage />} />
         <Route
           path="/admin"
           element={
@@ -24,6 +25,14 @@ function App() {
           element={
             <Dashboard>
               <UsersPage />
+            </Dashboard>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <Dashboard>
+              <AdminCourses />
             </Dashboard>
           }
         />
